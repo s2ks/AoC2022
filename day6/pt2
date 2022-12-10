@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+
+ans = 0
+
+while 1:
+    try:
+        x = input()
+
+        for i in range(14, len(x)):
+            part = x[i-14:i]
+            seen = []
+            marker = True
+
+            for c in part:
+                if c in seen:
+                    marker = False
+                    break
+
+                seen.append(c)
+
+            if marker:
+                ans = i
+                break
+
+            print(x[i-14:i])
+    except EOFError:
+        break
+
+print(ans)

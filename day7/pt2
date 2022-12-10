@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+dir = []
+path = ""
+tree = {}
+
+MAX_DISK = 70000000
+NEED = 30000000
+
+while 1:
+    try:
+        x = input()
+        x = x.split(" ")
+
+        if x[0] == "$":
+            command= x[1]
+            if command == "cd":
+                arg = x[2]
+
+                if arg == "..":
+                    dir.pop()
+                else:
+                    dir.append(arg)
+
+                oldpath = path
+                path = ".".join(dir)
+
+                if tree.get(path) == None:
+                    tree[path] = {
+                            "contains": [],
+                            "size": 0
+                            }
+        elif x[0] != "dir":
+            tree[path]["size"] += int(x[0])
+        else:
+            name = x[1]
+            tree[path]["contains"].append(path + "." + name)
+    except EOFError:
+        break
+
+def total(path):
+    node = tree[path]
+    sum = node["size"]
+
+    for p in node["contains"]:
+        sum += total(p)
+
+    return sum
+
+
+used = total("/")
+avail = MAX_DISK - used
+delsize = NEED - avail
+
+ans = used
+for path in tree:
+    node = tree[path]
+    size = total(path)
+
+    if size >= delsize:
+        if size < ans:
+            ans = size
+
+print(ans)

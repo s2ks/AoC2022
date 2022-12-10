@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+stack = [
+         ["N", "W", "F", "R", "Z", "S", "M", "D"],
+         ["S", "G", "Q", "P", "W"],
+         ["C", "J", "N", "F", "Q", "V", "R", "W"],
+         ["L", "D", "G", "C", "P", "Z", "F"],
+         ["S", "P", "T"],
+         ["L", "R", "W", "F", "D", "H"],
+         ["C", "D", "N", "Z"],
+         ["Q", "J", "S", "V", "F", "R", "N", "W"],
+         ["V", "W", "Z", "G", "S", "M", "R"]
+]
+
+for i in range(len(stack)):
+    stack[i].reverse()
+
+while 1:
+    x = input()
+
+    if x == "":
+        break
+
+while 1:
+    try:
+        x = input()
+        x = x.split(" ")
+
+        count = int(x[1])
+        fr = int(x[3]) - 1
+        to = int(x[5]) - 1
+
+        tmp = []
+        while count > 0:
+            crate = stack[fr].pop()
+            tmp.append(crate)
+            count -= 1
+
+        tmp.reverse()
+        stack[to].extend(tmp)
+
+    except EOFError:
+        break
+
+
+for e in stack:
+    print(e[-1], end="")
+print()

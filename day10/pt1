@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+ans = 0
+
+accum = 1
+clock = 1
+
+check = 20
+
+while 1:
+    try:
+        x = input()
+        xs = x.split(" ")
+
+        opcode = xs[0]
+
+        cycle = 0
+
+        if opcode == "noop":
+            cycle = 1
+            arg = 0
+        elif opcode == "addx":
+            arg = int(xs[1])
+            cycle = 2
+
+        while cycle > 0:
+            if clock == check:
+                ans += (clock * accum)
+                check += 40
+            cycle -= 1
+
+            clock += 1
+
+
+        accum += arg
+
+
+    except EOFError:
+        break
+
+if clock == check:
+    ans += (clock * accum)
+
+print(ans)

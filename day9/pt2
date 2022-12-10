@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+
+ans = 0
+
+head = (0, 0)
+tail = [(0, 0) for i in range(9)]
+
+visited = [(0, 0)]
+
+delta = {
+        "U": (0, 1),
+        "D": (0, -1),
+        "L": (-1, 0),
+        "R": (1, 0),
+        }
+
+while 1:
+    try:
+        x = input()
+        xs = x.split(" ")
+
+        d = xs[0]
+        n = int(xs[1])
+
+        (hx, hy) = head
+        (tx, ty) = (0, 0)
+        (dhx, dhy) = delta[d]
+
+        while n > 0:
+            hx += dhx
+            hy += dhy
+
+            (tnx, tny) = (hx, hy)
+
+            head = (hx, hy)
+
+            for i in range(len(tail)):
+                (tx, ty) = tail[i]
+
+                dx = tnx - tx
+                dy = tny - ty
+
+                if abs(dx) >= 1 and abs(dy) >= 1 and (abs(dx) > 1 or abs(dy) > 1):
+                    tx += dx // abs(dx)
+                    ty += dy // abs(dy)
+                elif abs(dx) > 1:
+                    tx += dx // abs(dx)
+                elif abs(dy) > 1:
+                    ty += dy // abs(dy)
+
+                tail[i] = (tx, ty)
+                (tnx, tny) = (tx, ty)
+
+                if i == 8 and (tail[i]) not in visited:
+                    visited.append((tx, ty))
+
+            n -= 1
+
+    except EOFError:
+        break
+
+print(len(visited))

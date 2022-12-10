@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+stack = [[] for i in range(9)]
+
+while 1:
+    x = input().replace("    ", " [#]")
+
+    if "1" in x:
+        break
+
+    x = x.split(" ")
+    for i, e in enumerate(x):
+        e = e.strip("[]")
+
+        if e != "#":
+            stack[i].append(e)
+
+for i, e in enumerate(stack):
+    stack[i].reverse()
+
+input()
+
+while 1:
+    try:
+        x = input()
+        x = x.split(" ")
+
+        count = int(x[1])
+        fr = int(x[3]) - 1
+        to = int(x[5]) - 1
+
+        while count > 0:
+            crate = stack[fr].pop()
+            stack[to].append(crate)
+            count -= 1
+
+    except EOFError:
+        break
+
+for e in stack:
+    print(e[-1], end="")
+
+print()
