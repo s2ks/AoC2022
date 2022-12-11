@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import sys
-import numpy as np
 
 groups = [line for line in sys.stdin.read().split("\n\n")]
 groups = [group.rstrip().split("\n") for group in groups]
 
-sums = [np.sum([int(e) for e in group]) for group in groups]
+sums = [sum([int(e) for e in group]) for group in groups]
 sums.sort(reverse=1)
 print(sums[0] + sums[1] + sums[2])
