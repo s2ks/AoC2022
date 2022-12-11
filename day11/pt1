@@ -1,33 +1,29 @@
 #!/usr/bin/env python3
 
+import sys
+
 class Monkey:
     pass
 
 monkeys = []
 
-while 1:
-    try:
-        _ = input()
+input = [monkey for monkey in sys.stdin.read().rstrip().split("\n\n")]
 
-        items = input().split(":")[1].split(",")
+for monkey in input:
+    line = monkey.rstrip().split("\n")
+    m = Monkey()
+    m.items = [int(i) for i in line[1].split(":")[1].split(",")]
+    m.op = line[2].split(":")[1].split("=")[1].strip()
+    m.test = int(line[3].split(":")[1].strip().split(" ")[2])
+    m.true = int(line[4].split(":")[1].strip().split(" ")[3])
+    m.false = int(line[5].split(":")[1].strip().split(" ")[3])
+    m.thrown = 0
 
-        monk = Monkey()
-        monk.items = [int(i) for i in items]
-        monk.op = input().split(":")[1].split("=")[1]
-        monk.test = int(input().split(":")[1].split(" ")[3])
-        monk.true = int(input().split(":")[1].split(" ")[4])
-        monk.false = int(input().split(":")[1].split(" ")[4])
-        monk.thrown = 0
-
-        monkeys.append(monk)
-
-        _ = input()
-
-    except EOFError:
-        break
+    monkeys.append(m)
 
 for i in range(20):
     for m in monkeys:
+        m.thrown += len(m.items)
         for item in m.items:
             old = item
             worry = eval(m.op) // 3
@@ -37,15 +33,9 @@ for i in range(20):
             else:
                 monkeys[m.false].items.append(worry)
 
-            m.thrown += 1
-
         m.items = []
 
-
-active = []
-for m in monkeys:
-    active.append(m.thrown)
-
-active.sort(reverse=True)
+active = [m.thrown for m in monkeys]
+active.sort(reverse=1)
 
 print(active[0] * active[1])

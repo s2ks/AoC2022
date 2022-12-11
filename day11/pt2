@@ -1,36 +1,28 @@
 #!/usr/bin/env python3
 
+import sys
+import numpy as np
+
 class Monkey:
     pass
 
 monkeys = []
 
-while 1:
-    try:
-        # Monkey n:
-        _ = input()
+input = [monkey for monkey in sys.stdin.read().rstrip().split("\n\n")]
 
-        items = input().split(":")[1].split(",")
+for monkey in input:
+    line = monkey.rstrip().split("\n")
+    m = Monkey()
+    m.items = [int(i) for i in line[1].split(":")[1].split(",")]
+    m.op = line[2].split(":")[1].split("=")[1].strip()
+    m.test = int(line[3].split(":")[1].strip().split(" ")[2])
+    m.true = int(line[4].split(":")[1].strip().split(" ")[3])
+    m.false = int(line[5].split(":")[1].strip().split(" ")[3])
+    m.thrown = 0
 
-        monk = Monkey()
-        monk.items = [int(i) for i in items]
-        monk.op = input().split(":")[1].split("=")[1]
-        monk.test = int(input().split(":")[1].split(" ")[3])
-        monk.true = int(input().split(":")[1].split(" ")[4])
-        monk.false = int(input().split(":")[1].split(" ")[4])
-        monk.thrown = 0
+    monkeys.append(m)
 
-        monkeys.append(monk)
-
-        # empty line
-        _ = input()
-
-    except EOFError:
-        break
-
-mod = 1
-for monk in monkeys:
-    mod *= monk.test
+mod = np.product([m.test for m in monkeys])
 
 for i in range(10000):
     for m in monkeys:
@@ -48,10 +40,7 @@ for i in range(10000):
 
         m.items = []
 
-active = []
-for m in monkeys:
-    active.append(m.thrown)
-
-active.sort(reverse=True)
+active = [m.thrown for m in monkeys]
+active.sort(reverse=1)
 
 print(active[0] * active[1])
