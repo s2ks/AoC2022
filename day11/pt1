@@ -1,21 +1,17 @@
 #!/usr/bin/env python3
 
-ans = 0
-
-
-class Monke:
+class Monkey:
     pass
 
 monkeys = []
 
 while 1:
     try:
-        # Monkey n:
         _ = input()
 
         items = input().split(":")[1].split(",")
 
-        monk = Monke()
+        monk = Monkey()
         monk.items = [int(i) for i in items]
         monk.op = input().split(":")[1].split("=")[1]
         monk.test = int(input().split(":")[1].split(" ")[3])
@@ -23,21 +19,16 @@ while 1:
         monk.false = int(input().split(":")[1].split(" ")[4])
         monk.thrown = 0
 
-        print(monk.op)
-
         monkeys.append(monk)
 
-        # empty line
         _ = input()
 
     except EOFError:
         break
 
-# print(monkeys)
 for i in range(20):
     for m in monkeys:
         for item in m.items:
-            #Monkey inspects item `item`
             old = item
             worry = eval(m.op) // 3
 

@@ -13,7 +13,7 @@ while 1:
         items = input().split(":")[1].split(",")
 
         monk = Monkey()
-        monk.items = [(int(i), int(i)) for i in items]
+        monk.items = [int(i) for i in items]
         monk.op = input().split(":")[1].split("=")[1]
         monk.test = int(input().split(":")[1].split(" ")[3])
         monk.true = int(input().split(":")[1].split(" ")[4])
@@ -35,16 +35,16 @@ for monk in monkeys:
 for i in range(10000):
     for m in monkeys:
         m.thrown += len(m.items)
-        for item, worry in m.items:
-            old = worry
+        for item in m.items:
+            old = item
             worry = eval(m.op)
 
             worry %= mod
 
             if worry % m.test == 0:
-                monkeys[m.true].items.append((item, worry))
+                monkeys[m.true].items.append(worry)
             else:
-                monkeys[m.false].items.append((item, worry))
+                monkeys[m.false].items.append(worry)
 
         m.items = []
 
