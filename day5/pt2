@@ -1,48 +1,42 @@
 #!/usr/bin/env python3
 
-stack = [
-         ["N", "W", "F", "R", "Z", "S", "M", "D"],
-         ["S", "G", "Q", "P", "W"],
-         ["C", "J", "N", "F", "Q", "V", "R", "W"],
-         ["L", "D", "G", "C", "P", "Z", "F"],
-         ["S", "P", "T"],
-         ["L", "R", "W", "F", "D", "H"],
-         ["C", "D", "N", "Z"],
-         ["Q", "J", "S", "V", "F", "R", "N", "W"],
-         ["V", "W", "Z", "G", "S", "M", "R"]
-]
+import sys
+
+(start, input) = tuple(sys.stdin.read().rstrip().split("\n\n"))
+
+start = start.split("\n")
+
+stack = []
+
+for i in range(0, len(start[0]), 4):
+    stack.append([])
+    for line in start:
+        box = line[i:i+4].strip()
+
+        if "[" in box and "]" in box:
+            stack[-1].append(box.strip("[]"))
 
 for i in range(len(stack)):
     stack[i].reverse()
 
-while 1:
-    x = input()
+input = input.rstrip().split("\n")
 
-    if x == "":
-        break
+for line in input:
+    part = line.split(" ")
+    count = int(part[1])
+    fr = int(part[3]) - 1
+    to = int(part[5]) - 1
 
-while 1:
-    try:
-        x = input()
-        x = x.split(" ")
+    tmp = []
+    while count > 0:
+        crate = stack[fr].pop()
+        tmp.append(crate)
+        count -= 1
 
-        count = int(x[1])
-        fr = int(x[3]) - 1
-        to = int(x[5]) - 1
-
-        tmp = []
-        while count > 0:
-            crate = stack[fr].pop()
-            tmp.append(crate)
-            count -= 1
-
-        tmp.reverse()
-        stack[to].extend(tmp)
-
-    except EOFError:
-        break
-
+    tmp.reverse()
+    stack[to].extend(tmp)
 
 for e in stack:
     print(e[-1], end="")
+
 print()

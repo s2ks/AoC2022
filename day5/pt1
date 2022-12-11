@@ -1,41 +1,36 @@
 #!/usr/bin/env python3
 
-stack = [[] for i in range(9)]
+import sys
 
-while 1:
-    x = input().replace("    ", " [#]")
+(start, input) = tuple(sys.stdin.read().rstrip().split("\n\n"))
 
-    if "1" in x:
-        break
+start = start.split("\n")
 
-    x = x.split(" ")
-    for i, e in enumerate(x):
-        e = e.strip("[]")
+stack = []
 
-        if e != "#":
-            stack[i].append(e)
+for i in range(0, len(start[0]), 4):
+    stack.append([])
+    for line in start:
+        box = line[i:i+4].strip()
 
-for i, e in enumerate(stack):
+        if "[" in box and "]" in box:
+            stack[-1].append(box.strip("[]"))
+
+for i in range(len(stack)):
     stack[i].reverse()
 
-input()
+input = input.rstrip().split("\n")
 
-while 1:
-    try:
-        x = input()
-        x = x.split(" ")
+for line in input:
+    part = line.split(" ")
+    count = int(part[1])
+    fr = int(part[3]) - 1
+    to = int(part[5]) - 1
 
-        count = int(x[1])
-        fr = int(x[3]) - 1
-        to = int(x[5]) - 1
-
-        while count > 0:
-            crate = stack[fr].pop()
-            stack[to].append(crate)
-            count -= 1
-
-    except EOFError:
-        break
+    while count > 0:
+        crate = stack[fr].pop()
+        stack[to].append(crate)
+        count -= 1
 
 for e in stack:
     print(e[-1], end="")
