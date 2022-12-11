@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+
+class Monkey:
+    pass
+
+monkeys = []
+
+while 1:
+    try:
+        # Monkey n:
+        _ = input()
+
+        items = input().split(":")[1].split(",")
+
+        monk = Monkey()
+        monk.items = [(int(i), int(i)) for i in items]
+        monk.op = input().split(":")[1].split("=")[1]
+        monk.test = int(input().split(":")[1].split(" ")[3])
+        monk.true = int(input().split(":")[1].split(" ")[4])
+        monk.false = int(input().split(":")[1].split(" ")[4])
+        monk.thrown = 0
+
+        monkeys.append(monk)
+
+        # empty line
+        _ = input()
+
+    except EOFError:
+        break
+
+mod = 1
+for monk in monkeys:
+    mod *= monk.test
+
+for i in range(10000):
+    for m in monkeys:
+        m.thrown += len(m.items)
+        for item, worry in m.items:
+            old = worry
+            worry = eval(m.op)
+
+            worry %= mod
+
+            if worry % m.test == 0:
+                monkeys[m.true].items.append((item, worry))
+            else:
+                monkeys[m.false].items.append((item, worry))
+
+        m.items = []
+
+active = []
+for m in monkeys:
+    active.append(m.thrown)
+
+active.sort(reverse=True)
+
+print(active[0] * active[1])
