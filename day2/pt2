@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+
+import sys
+
+shape = {
+        "A": {"beats": "C", "points": 1, "draws": "A"},
+        "B": {"beats": "A", "points": 2, "draws": "B"},
+        "C": {"beats": "B", "points": 3, "draws": "C"},
+        }
+
+result = {
+        "X": 0,
+        "Y": 3,
+        "Z": 6,
+        }
+
+input = sys.stdin.read().rstrip().split("\n")
+total = 0
+
+for line in input:
+    (you, res) = tuple(line.split(" "))
+    points = result[res]
+
+    turn = ""
+
+    if points == 6:
+        for key in shape:
+            if key != shape[you]["beats"] and key != shape[you]["draws"]:
+                turn = key
+
+    elif points == 3:
+        turn = shape[you]["draws"]
+    else:
+        turn = shape[you]["beats"]
+
+    points += shape[turn]["points"]
+
+    total += points
+
+print(total)

@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import sys
+
+shape = {
+        "X": {"beats": "C", "points": 1, "draws": "A"},
+        "Y": {"beats": "A", "points": 2, "draws": "B"},
+        "Z": {"beats": "B", "points": 3, "draws": "C"},
+        }
+
+input = sys.stdin.read().rstrip().split("\n")
+total = 0
+
+for line in input:
+    (you, me) = tuple(line.split(" "))
+    beats = you == shape[me]["beats"]
+    draws = you == shape[me]["draws"]
+    points = shape[me]["points"]
+    points += 3 if not beats and draws else 0
+    points += 6 if beats else 0
+
+    total += points
+
+print(total)
