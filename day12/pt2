@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+import sys
+
+# sys.setrecursionlimit(4000)
+# print(sys.getrecursionlimit())
+# exit()
+
+grid = [list(line) for line in sys.stdin.read().rstrip().split("\n")]
+
+tail = [[-1 for c in row] for row in grid]
+
+start = ()
+shortest = 0
+
+(w, h) = (len(grid[0]), len(grid))
+
+delta = [
+        (0, 1),
+        (0, -1),
+        (1, 0),
+        (-1, 0),
+        ]
+
+def solve(pos, depth=0):
+    (x, y) = pos
+
+    if depth > 500:
+        return
+
+    if grid[y][x] == "a":
+        return depth
+
+    if tail[y][x] > -1 and tail[y][x] <= depth:
+        return
+
+    tail[y][x] = depth
+
+    v = ord(grid[y][x])
+
+    for d in delta:
+        (x, y) = pos
+
+        (dx, dy) = d
+        x += dx
+        y += dy
+
+        if x >= w or x < 0:
+            continue
+
+        if y >= h or y < 0:
+            continue
+
+        nv = ord(grid[y][x])
+
+        global shortest
+
+        if v - nv <= 1:
+             res = solve((x, y), depth+1)
+             if res != None:
+                 if shortest == 0 or res < shortest:
+                     shortest = res
+
+for y in range(len(grid)):
+    for x in range(len(grid[y])):
+        c = grid[y][x]
+        if c == "E":
+            start = (x, y)
+            grid[y][x] = "z"
+
+
+solve(start)
+
+print(shortest)
