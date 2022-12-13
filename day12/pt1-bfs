@@ -4,7 +4,6 @@ import sys
 
 grid = [list(line) for line in sys.stdin.read().rstrip().split("\n")]
 
-
 start = ()
 end = ()
 
@@ -26,7 +25,6 @@ depth = 0
 
 while queue:
     batch = queue.pop(0)
-
 
     if end in batch:
         break
