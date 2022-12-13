@@ -1,9 +1,0 @@
-#!/bin/bash
-
-DAY=$(date +%-d)
-SESSIONID="<SESSION ID>"
-
-curl "https://adventofcode.com/2022/day/$DAY/input" \
-	-H 'User-Agent: Mozilla/5.0' \
-	-H "Cookie: session=$SESSIONID" \
-	> day$DAY/input
