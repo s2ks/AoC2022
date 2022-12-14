@@ -32,7 +32,6 @@ FLOOR = max([y for (_, y) in walls]) + 2
 
 visited = []
 
-count = 0
 def fall(pos):
     x, y = pos
     if pos in walls or y == FLOOR or pos in visited:
@@ -43,8 +42,5 @@ def fall(pos):
     for dx in [0, -1, 1]:
         fall((x+dx, y+1))
 
-    global count
-    count += 1
-
 fall((500, 0))
-print(count)
+print(len(visited))
