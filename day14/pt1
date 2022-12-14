@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+
+import sys
+
+lines = sys.stdin.read().rstrip().split("\n")
+parts = []
+walls = []
+
+for line in lines:
+    coords = [tuple(map(lambda n: int(n), part.split(",")))
+              for part in line.split(" -> ")]
+
+    for i in range(1, len(coords)):
+        x0, y0 = coords[i-1]
+        x1, y1 = coords[i]
+
+        dx = max([x1, x0]) - min([x1, x0])
+        dy = max([y1, y0]) - min([y1, y0])
+
+        x, y = (min([x0, x1]), min([y0, y1]))
+
+        dy += 1 if dy else 0
+        dx += 1 if dx else 0
+
+        while dy > 0 or dx > 0:
+            dy -= 1 if dy > 0 else 0
+            dx -= 1 if dx > 0 else 0
+            wall = (x+dx, y+dy)
+            if wall not in walls:
+                walls.append((x + dx, y + dy))
+
+
+MIN = min(walls)
+MAX = max(walls)
+print(MIN, MAX)
+
+sand_blocks = []
+source = (500, 0)
+
+def collides(x, y):
+    if (x, y) in sand_blocks:
+        return 1
+
+    if (x, y) in walls:
+        return 1
+
+    return 0
+
+def animate(pos):
+    x, y = pos
+    if not collides(x, y+1):
+        return (x, y+1)
+
+    if not collides(x-1, y+1):
+        return (x-1, y+1)
+
+    if not collides(x+1, y+1):
+        return (x+1, y+1)
+
+    return (x, y)
+
+while 1:
+    prev = (500, 0)
+    next = animate(prev)
+
+    while prev != next:
+        if next < MIN or next > MAX:
+            break
+
+        prev = next
+        next = animate(prev)
+
+    if next < MIN or next > MAX:
+        break
+
+    sand_blocks.append(next)
+
+print(sand_blocks)
+print(len(sand_blocks))

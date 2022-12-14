@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+
+import sys
+
+lines = sys.stdin.read().rstrip().split("\n")
+parts = []
+walls = []
+
+for line in lines:
+    coords = [tuple(map(lambda n: int(n), part.split(",")))
+              for part in line.split(" -> ")]
+
+    for i in range(1, len(coords)):
+        x0, y0 = coords[i-1]
+        x1, y1 = coords[i]
+
+        dx = max([x1, x0]) - min([x1, x0])
+        dy = max([y1, y0]) - min([y1, y0])
+
+        x, y = (min([x0, x1]), min([y0, y1]))
+
+        dy += 1 if dy else 0
+        dx += 1 if dx else 0
+
+        while dy > 0 or dx > 0:
+            dy -= 1 if dy > 0 else 0
+            dx -= 1 if dx > 0 else 0
+            wall = (x+dx, y+dy)
+            if wall not in walls:
+                walls.append((x + dx, y + dy))
+
+
+MIN = (min([x for (x, _) in walls]), min([y for (_, y) in walls]))
+MAX = (max([x for (x, _) in walls]), max([y for (_, y) in walls]))
+
+print(MIN, MAX)
+
+FLOOR = max([y for (_, y) in walls]) + 2
+
+sand = []
+
+def collides(x, y):
+    if (x, y) in sand:
+        return 1
+
+    if (x, y) in walls:
+        return 1
+
+    if y == FLOOR:
+        return 1
+
+    return 0
+
+def fall(pos):
+    x, y = pos
+
+    # down
+    if not collides(x, y+1):
+        return (x, y+1)
+
+    # left-down
+    if not collides(x-1, y+1):
+        return (x-1, y+1)
+
+    # right-down
+    if not collides(x+1, y+1):
+        return (x+1, y+1)
+
+    # cur pos
+    return (x, y)
+
+while 1:
+    prev = (500, 0)
+    next = fall(prev)
+
+    while prev != next:
+        # print(next)
+        prev = next
+        next = fall(prev)
+
+    sand.append(next)
+    if next == (500, 0):
+        break
+
+
+print(len(sand))
