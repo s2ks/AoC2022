@@ -1,0 +1,50 @@
+#!/usr/bin/env python3
+
+import sys
+
+lines = sys.stdin.read().rstrip().split("\n")
+walls = []
+
+for line in lines:
+    coords = [tuple(map(lambda n: int(n), part.split(",")))
+              for part in line.split(" -> ")]
+
+    for i in range(1, len(coords)):
+        x0, y0 = coords[i-1]
+        x1, y1 = coords[i]
+
+        dx = max([x1, x0]) - min([x1, x0])
+        dy = max([y1, y0]) - min([y1, y0])
+
+        x, y = (min([x0, x1]), min([y0, y1]))
+
+        dy += 1 if dy else 0
+        dx += 1 if dx else 0
+
+        while dy > 0 or dx > 0:
+            dy -= 1 if dy > 0 else 0
+            dx -= 1 if dx > 0 else 0
+            wall = (x+dx, y+dy)
+            if wall not in walls:
+                walls.append((x + dx, y + dy))
+
+FLOOR = max([y for (_, y) in walls]) + 2
+
+visited = []
+
+count = 0
+def fall(pos):
+    x, y = pos
+    if pos in walls or y == FLOOR or pos in visited:
+        return
+
+    visited.append(pos)
+
+    for dx in [0, -1, 1]:
+        fall((x+dx, y+1))
+
+    global count
+    count += 1
+
+fall((500, 0))
+print(count)
