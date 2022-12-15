@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import sys
+
+input = sys.stdin.read().rstrip()
+sensors = [[tuple([int(coord.split("=")[1]) for coord in part.split(" at ")[1].split(", ")])
+          for part in line.split(": ")] for line in input.split("\n")]
+
+
+CHECK = 2000000
+ranges = []
+
+xs = []
+
+for sensor in sensors:
+    (x0, y0), (x1, y1) = sensor
+
+    r = abs(x0-x1) + abs(y0-y1)
+
+    if abs(y0-CHECK) > r:
+        continue
+
+    dx = abs(x0-x1)+abs(y0-y1) - abs(y0-CHECK)
+
+    ranges.append([x0-dx, x0+dx])
+    xs.append(x0-dx)
+    xs.append(x0+dx)
+
+beacons = [(x,y) for (_, _), (x, y) in sensors]
+
+excluded = [0 for x in range(min(xs), max(xs)+1)]
+
+for i, (x0, x1) in enumerate(ranges):
+    for x in range(x0, x1+1):
+        y = CHECK
+        if (x,y) not in beacons:
+            excluded[x-min(xs)] = 1
+
+print(len(list(filter(lambda n: n==1, excluded))))

@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+
+import sys
+
+input = sys.stdin.read().rstrip()
+sensors = [[tuple([int(coord.split("=")[1]) for coord in part.split(" at ")[1].split(", ")])
+          for part in line.split(": ")] for line in input.split("\n")]
+
+MIN = 0
+MAX = 4000000
+# MAX=20
+
+def merge(row):
+    if len(row) == 1:
+        return row
+
+    a, b = row[0]
+
+    for se in row[1:]:
+        (s, e) = se
+        if s >= a and s <= b and e <= b and e >= a:
+            row.pop(row.index(se))
+
+    merged = False
+    for se in row[1:]:
+        (s, e) = se
+        if s <= b+1 and e > b:
+            b = e
+            row.pop(row.index(se))
+            merged = True
+
+    row[0] = [a, b]
+
+    if not merged: return row
+    else: return merge(row)
+
+
+for y_check in range(MIN, MAX+1):
+    row = []
+    for sensor in sensors:
+        (x0, y0), (x1, y1) = sensor
+
+        r = abs(x0-x1) + abs(y0-y1)
+
+        if abs(y0-y_check) > r:
+            continue
+
+        dx = abs(x0-x1)+abs(y0-y1) - abs(y0-y_check)
+
+        a = x0-dx
+        b = x0+dx
+
+        a = MIN if a < MIN else MAX if a > MAX else a
+        b = MAX if b > MAX else MIN if b < MIN else b
+
+        row.append([a, b])
+
+    row.sort()
+
+    row = merge(row)
+    if len(row) != 1:
+        covered = [0 for i in range(MIN, MAX+1)]
+        for es in row:
+            e, s = es
+            for i in range(e, s+1):
+                covered[i] = 1
+        print((covered.index(0) * MAX) + y_check)
+        exit()
