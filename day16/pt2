@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+
+import sys
+from tqdm import tqdm
+
+input = sys.stdin.read().rstrip()
+lines = [line for line in input.split("\n")]
+
+valves = []
+rates = []
+conns = []
+
+for line in lines:
+    part = line.split("; ")
+
+    valves.append(part[0].split(" ")[1])
+    rates.append(int(part[0].split("rate=")[1]))
+
+    if "valve " in part[1]:
+        conns.append([part[1].split("valve ")[1]])
+    else:
+        conns.append([dest for dest in part[1].split("valves ")[1].split(", ")])
+
+dist = [[0xff for _ in valves] for _ in valves]
+dist[0][0] = 0
+
+for a in valves:
+    src = valves.index(a)
+    queue = [conns[src]]
+    round = 0
+    while queue:
+        batch = queue.pop(0)
+        round += 1
+
+        next_batch = []
+        for b in batch:
+            dest = valves.index(b)
+            if a == b:
+                dist[src][dest] = 0
+
+            if dist[src][dest] > round:
+                dist[src][dest] = round
+                next_batch += conns[dest]
+
+        if next_batch:
+            queue.append(next_batch)
+
+def dfs(path, time, sum):
+    valve = path[-1]
+
+    src = valves.index(valve)
+
+    s = [(sum, path)]
+    for nxt in valves:
+        dest = valves.index(nxt)
+        cost = dist[src][dest]
+        rate = rates[dest]
+
+        if cost >= time:
+            continue
+
+        if rate and nxt not in path:
+            newtime = time-cost
+            r = dfs(path + [nxt], newtime-1, sum+(newtime*rate))
+
+            s += r
+
+    return s
+
+sums = dfs(["AA"], 25, 0)
+sums.sort(key=lambda s: s[0], reverse=1)
+
+for sum1 in sums:
+    s1, p1 = sum1
+    for sum2 in sums:
+        s2, p2 = sum2
+        inters = False
+        if len(p1) != len(p2):
+            continue
+        for p in p1[1:]:
+            if p in p2[1:]:
+                inters = True
+
+        if inters == False:
+            print(s1+s2)
+            print(p1, p2)
+            exit()
+
+print(sums)
