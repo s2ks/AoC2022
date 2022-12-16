@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+
+import sys
+
+input = sys.stdin.read().rstrip()
+lines = [line for line in input.split("\n")]
+
+valves = []
+rates = []
+conns = []
+
+for line in lines:
+    part = line.split("; ")
+
+    valves.append(part[0].split(" ")[1])
+    rates.append(int(part[0].split("rate=")[1]))
+
+    if "valve " in part[1]:
+        conns.append([part[1].split("valve ")[1]])
+    else:
+        conns.append([dest for dest in part[1].split("valves ")[1].split(", ")])
+
+dist = [[0xff for _ in valves] for _ in valves]
+dist[0][0] = 0
+
+for a in valves:
+    src = valves.index(a)
+    queue = [conns[src]]
+    round = 0
+    while queue:
+        batch = queue.pop(0)
+        round += 1
+
+        next_batch = []
+        for b in batch:
+            dest = valves.index(b)
+            if a == b:
+                dist[src][dest] = 0
+
+            if dist[src][dest] > round:
+                dist[src][dest] = round
+                next_batch += conns[dest]
+
+        if next_batch:
+            queue.append(next_batch)
+
+def dfs(path, time, sum):
+    valve = path[-1]
+    src = valves.index(valve)
+
+    s = []
+    for nxt in valves:
+        dest = valves.index(nxt)
+        cost = dist[src][dest]
+        rate = rates[dest]
+
+        if cost >= time:
+            continue
+
+        if rate and nxt not in path:
+            newtime = time-cost
+
+            s.append(dfs(path + [nxt], newtime-1, sum+(newtime*rate)))
+
+    return max(s) if s else sum
+
+print(dfs(["AA"], 29, 0))
