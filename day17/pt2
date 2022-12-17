@@ -91,7 +91,7 @@ def push(rock, pos):
 
     return x0, y0
 
-TIMES = 1_000_000_000
+TIMES = 1_000_000_000_000
 
 for i in range(TIMES):
     rock = blocks[i % len(blocks)]
