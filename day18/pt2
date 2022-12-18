@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+#super hacky but a star is a star
+
+import sys
+
+input = sys.stdin.read().rstrip()
+coords = [tuple(map(lambda n: int(n)+2, line.split(","))) for line in input.split("\n")]
+
+areas = []
+queue = [[(0, 0, 0)]]
+visited = []
+
+while queue:
+    batch = queue.pop(0)
+
+    next_batch = []
+    for b in batch:
+        for d in [(1,0,0), (0,1,0), (0,0,1), (-1,0,0), (0,-1,0), (0,0,-1)]:
+
+            dx, dy, dz = d
+            x, y, z = b
+
+            next = (x+dx, y+dy, z+dz)
+
+            if next not in coords and next not in visited and min(next) >= 0 and max(next) < 25:
+                visited.append(next)
+                next_batch.append(next)
+
+            areas.append(next in coords)
+
+    if next_batch: queue.append(next_batch)
+
+print(sum(areas))

@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+
+import sys
+
+input = sys.stdin.read().rstrip()
+coords = [tuple(map(lambda n: int(n), line.split(","))) for line in input.split("\n")]
+
+areas = []
+for coord in coords:
+    for d in [(1,0,0), (0,1,0), (0,0,1), (-1,0,0), (0,-1,0), (0,0,-1)]:
+        dx, dy, dz = d
+        x, y, z = coord
+
+        next = (x+dx, y+dy, z+dz)
+
+        areas.append(next not in coords)
+
+print(sum(areas))
