@@ -6,4 +6,4 @@ input = [tuple(line.split(",")) for line in sys.stdin.read().rstrip().split("\n"
 input = [(map(int, a.split("-")), map(int, b.split("-"))) for a, b in input]
 input = [(set([*range(a0, a1+1)]), set([*range(b0, b1+1)])) for (a0, a1), (b0, b1) in input]
 
-print(sum([a.issubset(b) or b.issubset(a) for a, b in input]))
+print(sum([a >= b or a <= b for a, b in input]))
