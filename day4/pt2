@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
 
-ans = 0
+import sys
 
-while 1:
-    try:
-        x = input()
-        xs = x.split(",")
+input = [tuple(line.split(",")) for line in sys.stdin.read().rstrip().split("\n")]
+input = [(map(int, a.split("-")), map(int, b.split("-"))) for a, b in input]
+input = [(set([*range(a0, a1+1)]), set([*range(b0, b1+1)])) for (a0, a1), (b0, b1) in input]
 
-        r1 = xs[0].split("-")
-        r2 = xs[1].split("-")
-
-        r1 = [*range(int(r1[0]), int(r1[1]) + 1)]
-        r2 = [*range(int(r2[0]), int(r2[1]) + 1)]
-
-        for r in r1:
-            if r in r2:
-                ans += 1
-                break
-
-    except EOFError:
-        break
-
-print(ans)
+print(sum([not a.isdisjoint(b) for a, b in input]))
