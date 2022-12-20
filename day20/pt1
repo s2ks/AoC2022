@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-from math import remainder
 
 input = sys.stdin.read().rstrip()
 orig = [(int(line), i) for i, line in enumerate(input.split("\n"))]
