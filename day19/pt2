@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+from functools import cache, lru_cache
+from tqdm import tqdm
+
+input = sys.stdin.read().rstrip()
+blueprints = [tuple(map(int, re.findall(r'\d+', line.split(": ")[1]))) for line in input.split("\n")]
+
+@cache
+def dfs(bp, resources, botcount, time):
+    # print(bp)
+    (orebot_ore,
+    claybot_ore,
+    obsidianbot_ore,
+    obsidianbot_clay,
+    geodebot_ore,
+    geodebot_obsidian) = bp
+
+    ore, clay, obsidian, geodes = resources
+    orebots, claybots, obsidianbots, geodebots = botcount
+
+    profit = geodes
+
+    max_ore  = max([orebot_ore, claybot_ore, obsidianbot_ore, geodebot_ore]) * time
+    max_clay = obsidianbot_clay * time
+    max_obsidian = geodebot_obsidian * time
+
+    # We don't ever need to create more ore bots than whatever the bot that requires
+    # the most ore needs to be built
+    max_orebots = max([orebot_ore, claybot_ore, obsidianbot_ore, geodebot_ore])
+    max_claybots = obsidianbot_clay
+    max_obsidianbots = geodebot_obsidian
+
+    if time <= 0:
+        return geodes
+
+    if ore >= geodebot_ore * time and obsidian >= max_obsidian:
+        while time > 0:
+            profit += geodebots
+
+            geodebots += 1
+            time -= 1
+        return profit
+    # if ore + (orebots*time) < min([orebot_ore, claybot_ore, geodebot_ore]):
+        # return geodes + geodebots * time
+
+
+    builtany = False
+
+    # if we have enough resources to build a geode bot every minute then we don't need to
+    # build any other bots
+    if ore >= geodebot_ore and obsidian >= geodebot_obsidian:
+        next_ore = ore - geodebot_ore
+        next_obsidian = obsidian - geodebot_obsidian
+        return dfs(bp,
+                  (next_ore+orebots, clay+claybots, next_obsidian+obsidianbots, geodes+geodebots),
+                  (orebots, claybots, obsidianbots, geodebots+1), time-1)
+
+    # obsidian bot
+    if (ore >= obsidianbot_ore and clay >= obsidianbot_clay and obsidianbots < max_obsidianbots
+        and obsidian < max_obsidian):
+        next_ore = ore - obsidianbot_ore
+        next_clay = clay - obsidianbot_clay
+
+        next_time = time -1
+
+
+        # it doesn't make sense to spend ore on an obsidian bot bot if it doesn't net us enough
+        # ore to build a geode bot
+        if next_ore + orebots*next_time >= geodebot_ore:
+            builtany = True
+            res = dfs(bp,
+                      (next_ore+orebots, next_clay+claybots, obsidian+obsidianbots, geodes+geodebots),
+                      (orebots, claybots, obsidianbots+1, geodebots), time-1)
+            profit = res if res > profit else profit
+
+    # clay bot
+    if ore >= claybot_ore and claybots < max_claybots and clay < max_clay:
+        next_ore = ore - claybot_ore
+        next_time = time-1
+
+        # it doesn't make sense to spend ore on a clay bot if it doesn't net us enough
+        # ore to build either an obsidian bot or a geode bot
+        if next_ore + orebots*next_time >= min([obsidianbot_ore, geodebot_ore]):
+            builtany = True if claybot_ore > orebot_ore else False
+            res = dfs(bp,
+                      (next_ore+orebots, clay+claybots, obsidian+obsidianbots, geodes+geodebots),
+                      (orebots, claybots+1, obsidianbots, geodebots), time-1)
+            profit = res if res > profit else profit
+
+    if ore >= orebot_ore and orebots < max_orebots and ore < max_ore:
+        next_ore = ore - orebot_ore
+        next_time = time-1
+
+
+        # It doesn't make sense to build an ore bot if it doesn't net us enough
+        # ore to build either a clay bot, obsidian bot or a geode bot
+        if next_ore + (orebots+1)*next_time >= min([claybot_ore, obsidianbot_ore, geodebot_ore]):
+            builtany = True if orebot_ore > claybot_ore else False
+            res = dfs(bp,
+                      (next_ore+orebots, clay+claybots, obsidian+obsidianbots, geodes+geodebots),
+                      (orebots+1, claybots, obsidianbots, geodebots), time-1)
+            profit = res if res > profit else profit
+
+    if not builtany:
+        res =  dfs(bp,
+                   (ore+orebots, clay+claybots, obsidian+obsidianbots, geodes+geodebots),
+                   botcount, time-1)
+
+        profit = res if res > profit else profit
+
+    return profit
+
+ans = []
+
+blueprints = blueprints[:3]
+
+for bp in tqdm(blueprints):
+    res = dfs(bp, (0, 0, 0, 0), (1, 0, 0, 0), 32)
+    print(res)
+    ans.append(res)
+
+prod = 1
+for a in ans:
+    prod *= a
+
+print(prod)
