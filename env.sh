@@ -1,12 +1,13 @@
 #!/bin/bash
 
-YEAR=$(date +%Y)
-DAY=$(date +%-d)
 SESSIONID=$(cat sessionid)
 TEMPLATE=templ.py
 
 get() {
 	[[ -e day$DAY ]] || mkdir day$DAY
+
+	DAY=$(date +%-d)
+	YEAR=$(date +%Y)
 
 	curl "https://adventofcode.com/$YEAR/day/$DAY/input" \
 		-H 'User-Agent: Mozilla/5.0' \
