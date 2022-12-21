@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+
+input = sys.stdin.read().rstrip()
+lines = [line for line in input.split("\n")]
+
+dict = {}
+
+for line in lines:
+    key, val = line.split(": ")
+    dict[key] = int(val) if val.isnumeric() else val
+
+root_patch = dict["root"]
+root_patch = re.split(' \/ | \* | \+ | \- ', root_patch)
+root_patch = root_patch[0] + " = " + root_patch[1]
+dict["root"] = root_patch
+
+print(dict["root"])
+
+def human(key):
+    if key == "humn":
+        return True
+
+    if isinstance(dict[key], int):
+        return False
+
+    val = dict[key]
+    a, b = re.split(' \/ | \* | \+ | \- ', val)
+
+    return human(a) or human(b)
+
+
+def solve(key):
+    # assert key != "humn"
+    if isinstance(dict[key], int):
+        return dict[key]
+
+    val = dict[key]
+
+    if val.find("/") > -1:
+        a, b = val.split(" / ")
+        return solve(a) // solve(b)
+    if val.find("*") > -1:
+        a, b = val.split(" * ")
+        return solve(a) * solve(b)
+    if val.find("+") > -1:
+        a, b = val.split(" + ")
+        return solve(a) + solve(b)
+    if val.find("-") > -1:
+        a, b = val.split(" - ")
+        return solve(a) - solve(b)
+
+    assert 0
+
+
+a, b = dict["root"].split(" = ")
+# print(solve(a), solve(b))
+
+# if human(a):
+    # a, x = b, a
+# else:
+    # a, x = a, b
+
+# x = a
+
+# a = solve(a)
+
+
+# not much to see here, I solved this one semi-manually trying different upper/lower bounds
+# and seeing what sticks
+
+dict["humn"] = 3916491093817
+# dict["humn"] = 3000000000000
+
+print(solve(a), solve(b))
+
+assert solve(a) == solve(b)
+
+# print(solve(b), solve(x))
+# # print(d1, d2)
+
+# while solve(b) != (cur := solve(x)):
+
+    # dict["humn"] -= 1
+
+    # if dict["humn"] % 10000 == 0:
+        # print(dict["humn"], solve(x))
+
+# print(dict["humn"], solve(x), solve(b))
